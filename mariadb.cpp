@@ -68,6 +68,14 @@ void MySQL_pool_release(MYSQL* mysql)
 HALON_EXPORT
 void Halon_cleanup()
 {
+	std::unique_lock<std::mutex> ul(poolMutex);
+	while (!poolList.empty())
+	{
+		MYSQL* mysql = poolList.front();
+		mysql_close(mysql);
+		poolList.pop();
+	}
+
 	mysql_thread_end();
 }
 
