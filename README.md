@@ -30,7 +30,3 @@ plugins:
       cnf: /path/to/halon.cnf
       pool_size: 32
 ```
-
-## Build
-
-On CentOS install  and on
