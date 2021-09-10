@@ -1,6 +1,6 @@
 ## MariaDB client plugin
 
-This function connects to a MariaDB client using the MariaDB Connector/C library (has to be installed separately). It supports connection pooling and reconnects. Settings are made using a MariaDB client .cnf file (a sample is provided in this folder).
+This function connects to a MariaDB client using the MariaDB Connector/C library (mariadb-connector-c-devel / libmariadb-dev has to be installed separately to build). It supports connection pooling and reconnects. Settings are made using a MariaDB client .cnf file (a sample is provided in this folder).
 
 This plugin exports two HSL functions `mysql_query` and `mysql_escape_string`.
 
@@ -30,3 +30,7 @@ plugins:
       cnf: /path/to/halon.cnf
       pool_size: 32
 ```
+
+## Build
+
+On CentOS install  and on
