@@ -32,6 +32,16 @@ bool Halon_init(HalonInitContext* hic)
 	if (pool_size_)
 		pool_size = strtoul(pool_size_, nullptr, 10);
 
+	unsigned int read_timeout = 0;
+	const char* read_timeout_ = HalonMTA_config_string_get(HalonMTA_config_object_get(cfg, "read_timeout"), nullptr);
+	if (read_timeout_)
+		read_timeout = strtoul(read_timeout_, nullptr, 10);
+
+	unsigned int write_timeout = 0;
+	const char* write_timeout_ = HalonMTA_config_string_get(HalonMTA_config_object_get(cfg, "write_timeout"), nullptr);
+	if (write_timeout_)
+		write_timeout = strtoul(write_timeout_, nullptr, 10);
+
 	mysql_thread_init();
 
 	for (size_t i = 0; i < pool_size; ++i)
@@ -39,6 +49,10 @@ bool Halon_init(HalonInitContext* hic)
 		MYSQL* mysql = mysql_init(nullptr);
 		mysql_optionsv(mysql, MYSQL_OPT_RECONNECT, (void *)"1");
 		mysql_optionsv(mysql, MYSQL_READ_DEFAULT_FILE, (void *)cnf);
+		if (read_timeout)
+			mysql_optionsv(mysql, MYSQL_OPT_READ_TIMEOUT, (void *)&read_timeout);
+		if (write_timeout)
+			mysql_optionsv(mysql, MYSQL_OPT_WRITE_TIMEOUT, (void *)&write_timeout);
 		if (!mysql_real_connect(mysql, nullptr, nullptr, nullptr, nullptr, 0, 0, 0))
 			syslog(LOG_ERR, "MariaDB client (%zu/%zu): %s",
 				i + 1, pool_size, mysql_error(mysql));

@@ -15,6 +15,14 @@
       "type": "number",
       "default": 1,
       "description": "The connection pool size"
+    },
+    "read_timeout": {
+      "type": "number",
+      "description": "The read timeout"
+    },
+    "write_timeout": {
+      "type": "number",
+      "description": "The write timeout"
     }
   }
 }
