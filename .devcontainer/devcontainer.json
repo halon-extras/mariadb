@@ -1,0 +1,16 @@
+
+{
+	"name": "mariadb",
+	"dockerComposeFile": [
+		"docker-compose.yaml"
+	],
+	"workspaceFolder": "/mariadb",
+	"service": "halon-smtpd",
+	"overrideCommand": false,
+	"extensions": [
+		"Halon.vscode-halon",
+		"Halon.hsl-linter",
+		"Halon.hsl-debug",
+		"ms-vscode.cpptools"
+	]
+}

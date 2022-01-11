@@ -1,0 +1,22 @@
+version: '2'
+services:
+  halon-smtpd:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      args:
+        HALON_REPO_USER: ${HALON_REPO_USER}
+        HALON_REPO_PASS: ${HALON_REPO_PASS}
+    volumes:
+      - ../:/mariadb
+      - ./smtpd/dist:/etc/halon
+      - halon-spool:/var/spool/halon
+  mariadb:
+    image: mariadb
+    environment:
+      MARIADB_USER: test
+      MARIADB_PASSWORD: test
+      MARIADB_ROOT_PASSWORD: test
+      MARIADB_DATABASE: test
+volumes:
+  halon-spool:

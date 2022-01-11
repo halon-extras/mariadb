@@ -1,0 +1,5 @@
+[client]
+host=mariadb
+user=test
+password=test
+database=test
