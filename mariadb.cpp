@@ -8,6 +8,10 @@
 std::mutex poolMutex;
 std::condition_variable poolCV;
 std::queue<MYSQL*> poolList;
+std::string cnf;
+size_t pool_size = 1;
+unsigned int read_timeout = 0;
+unsigned int write_timeout = 0;
 
 HALON_EXPORT
 int Halon_version()
@@ -15,29 +19,39 @@ int Halon_version()
 	return HALONMTA_PLUGIN_VERSION;
 }
 
+MYSQL* mysql_init_2()
+{
+	MYSQL* mysql = mysql_init(nullptr);
+	mysql_optionsv(mysql, MYSQL_OPT_RECONNECT, (void *)"1");
+	mysql_optionsv(mysql, MYSQL_READ_DEFAULT_FILE, (void *)cnf.c_str());
+	if (read_timeout)
+		mysql_optionsv(mysql, MYSQL_OPT_READ_TIMEOUT, (void *)&read_timeout);
+	if (write_timeout)
+		mysql_optionsv(mysql, MYSQL_OPT_WRITE_TIMEOUT, (void *)&write_timeout);
+	return mysql;
+}
+
 HALON_EXPORT
 bool Halon_init(HalonInitContext* hic)
 {
 	HalonConfig *cfg;
 	HalonMTA_init_getinfo(hic, HALONMTA_INIT_CONFIG, nullptr, 0, &cfg, nullptr);
-	const char* cnf = HalonMTA_config_string_get(HalonMTA_config_object_get(cfg, "cnf"), nullptr);
-	if (!cnf)
+	const char* cnf_ = HalonMTA_config_string_get(HalonMTA_config_object_get(cfg, "cnf"), nullptr);
+	if (!cnf_)
 	{
 		syslog(LOG_CRIT, "MariaDB plugin has not .cnf file configured");
 		return false;
 	}
+	cnf = cnf_;
 
-	size_t pool_size = 1;
 	const char* pool_size_ = HalonMTA_config_string_get(HalonMTA_config_object_get(cfg, "pool_size"), nullptr);
 	if (pool_size_)
 		pool_size = strtoul(pool_size_, nullptr, 10);
 
-	unsigned int read_timeout = 0;
 	const char* read_timeout_ = HalonMTA_config_string_get(HalonMTA_config_object_get(cfg, "read_timeout"), nullptr);
 	if (read_timeout_)
 		read_timeout = strtoul(read_timeout_, nullptr, 10);
 
-	unsigned int write_timeout = 0;
 	const char* write_timeout_ = HalonMTA_config_string_get(HalonMTA_config_object_get(cfg, "write_timeout"), nullptr);
 	if (write_timeout_)
 		write_timeout = strtoul(write_timeout_, nullptr, 10);
@@ -46,13 +60,7 @@ bool Halon_init(HalonInitContext* hic)
 
 	for (size_t i = 0; i < pool_size; ++i)
 	{
-		MYSQL* mysql = mysql_init(nullptr);
-		mysql_optionsv(mysql, MYSQL_OPT_RECONNECT, (void *)"1");
-		mysql_optionsv(mysql, MYSQL_READ_DEFAULT_FILE, (void *)cnf);
-		if (read_timeout)
-			mysql_optionsv(mysql, MYSQL_OPT_READ_TIMEOUT, (void *)&read_timeout);
-		if (write_timeout)
-			mysql_optionsv(mysql, MYSQL_OPT_WRITE_TIMEOUT, (void *)&write_timeout);
+		MYSQL* mysql = mysql_init_2();
 		if (!mysql_real_connect(mysql, nullptr, nullptr, nullptr, nullptr, 0, 0, 0))
 			syslog(LOG_ERR, "MariaDB client (%zu/%zu): %s",
 				i + 1, pool_size, mysql_error(mysql));
@@ -68,6 +76,12 @@ MYSQL* MySQL_pool_aquire()
 	MYSQL* mysql = poolList.front();
 	poolList.pop();
 	ul.unlock();
+	if (!mysql_get_host_info(mysql)) {
+		mysql_close(mysql);
+		mysql = mysql_init_2();
+		if (!mysql_real_connect(mysql, nullptr, nullptr, nullptr, nullptr, 0, 0, 0))
+			syslog(LOG_ERR, "MariaDB client: %s", mysql_error(mysql));
+	}
 	return mysql;
 }
 
