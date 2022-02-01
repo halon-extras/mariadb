@@ -44,5 +44,5 @@ $parameter = mysql_escape_string("my string");
 Execute the SQL statement on the server. A successful query result will return an associative array with an "result" array and the "affected" rows. On error an associative array with "errno", "error" and "sqlstate" will be provided.
 
 ```
-$result = mysql_query("SELECT * FROM table where column = '".mysql_escape_string($value).'";");
+$result = mysql_query("SELECT * FROM table where column = '".mysql_escape_string($value)."';");
 ```
