@@ -240,5 +240,7 @@ bool Halon_hsl_register(HalonHSLRegisterContext* ptr)
 {
 	HalonMTA_hsl_register_function(ptr, "mysql_query", &halon_mysql_query);
 	HalonMTA_hsl_register_function(ptr, "mysql_escape_string", &halon_mysql_escape_string);
+	HalonMTA_hsl_module_register_function(ptr, "mysql_query", &halon_mysql_query);
+	HalonMTA_hsl_module_register_function(ptr, "mysql_escape_string", &halon_mysql_escape_string);
 	return true;
 }

@@ -36,6 +36,7 @@ plugins:
 Returns the argument parameter escaped. Safe to be used within a SQL statement.
 
 ```
+import { mysql_escape_string } from "extras://mariadb";
 $parameter = mysql_escape_string("my string");
 ```
 
@@ -44,5 +45,6 @@ $parameter = mysql_escape_string("my string");
 Execute the SQL statement on the server. A successful query result will return an associative array with an "result" array and the "affected" rows. On error an associative array with "errno", "error" and "sqlstate" will be provided.
 
 ```
+import { mysql_query, mysql_escape_string } from "extras://mariadb";
 $result = mysql_query("SELECT * FROM table where column = '".mysql_escape_string($value)."';");
 ```
