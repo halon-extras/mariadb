@@ -31,6 +31,8 @@ plugins:
 
 ## Exported functions
 
+These functions needs to be [imported](https://docs.halon.io/hsl/structures.html#import) from the `extras://mariadb` module path.
+
 ### mysql_escape_string(parameter)
 
 Returns the argument parameter escaped. Safe to be used within a SQL statement.
