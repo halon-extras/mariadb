@@ -1,28 +1,78 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "description": "MariaDB client plugin schema",
-  "additionalProperties": false,
-  "required": [
-    "cnf"
-  ],
-  "properties": {
-    "cnf": {
-      "type": "string",
-      "description": "The .cnf path to use"
+  "oneOf": [
+    {
+      "type": "object",
+      "description": "MariaDB client plugin profile",
+      "additionalProperties": false,
+      "required": [
+        "cnf"
+      ],
+      "properties": {
+        "cnf": {
+          "type": "string",
+          "description": "The .cnf path to use"
+        },
+        "pool_size": {
+          "type": "number",
+          "default": 1,
+          "description": "The connection pool size"
+        },
+        "read_timeout": {
+          "type": "number",
+          "description": "The read timeout"
+        },
+        "write_timeout": {
+          "type": "number",
+          "description": "The write timeout"
+        }
+      }
     },
-    "pool_size": {
-      "type": "number",
-      "default": 1,
-      "description": "The connection pool size"
-    },
-    "read_timeout": {
-      "type": "number",
-      "description": "The read timeout"
-    },
-    "write_timeout": {
-      "type": "number",
-      "description": "The write timeout"
+    {
+      "type": "object",
+      "description": "MariaDB client plugin schema",
+      "additionalProperties": false,
+      "properties": {
+        "default_profile": {
+          "type": "string",
+          "description": "The default profile to use"
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "MariaDB client plugin profile",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "cnf"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The profile id"
+              },
+              "cnf": {
+                "type": "string",
+                "description": "The .cnf path to use"
+              },
+              "pool_size": {
+                "type": "number",
+                "default": 1,
+                "description": "The connection pool size"
+              },
+              "read_timeout": {
+                "type": "number",
+                "description": "The read timeout"
+              },
+              "write_timeout": {
+                "type": "number",
+                "description": "The write timeout"
+              }
+            }
+          }
+        }
+      }
     }
-  }
+  ]
 }

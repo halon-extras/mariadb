@@ -1,34 +1,55 @@
 [
     {
-        "name": "mysql_escape_string",
+        "name": "Map",
         "parameters": {
-            "required": [
+            "optional": [
                 {
-                    "name": "parameter",
+                    "name": "profile",
                     "type": "string"
                 }
-            ]
+            ],
+            "required": []
         },
-        "returnType": "string or none",
-        "detail": "mysql_escape_string(string $parameter): string or none",
-        "value": "mysql_escape_string($0)",
-        "documentation": "Returns the argument parameter escaped. Safe to be used within a SQL statement.",
-        "link": "[Full documentation](https://github.com/halon-extras/mariadb)"
-    },
-    {
-        "name": "mysql_query",
-        "parameters": {
-            "required": [
-                {
-                    "name": "statement",
-                    "type": "string"
-                }
-            ]
-        },
-        "returnType": "array or none",
-        "detail": "mysql_query(string $statement): array or none",
-        "value": "mysql_query($0)",
-        "documentation": "Execute the SQL statement on the server. A successful query result will return an associative array with an \"result\" array and the \"affected\" rows. On error an associative array with \"errno\", \"error\" and \"sqlstate\" will be provided.",
+        "methods": [
+            {
+                "name": "query",
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "statement",
+                            "type": "string"
+                        }
+                    ],
+                    "optional": []
+                },
+                "returnType": "array or none",
+                "detail": "MySQL->query(string $statement): array or none",
+                "value": "query($0)",
+                "documentation": "Execute the SQL statement on the server. A successful query result will return an associative array with an \"result\" array and the \"affected\" rows. On error an associative array with \"errno\", \"error\" and \"sqlstate\" will be provided.",
+                "link": "[Full documentation](https://github.com/halon-extras/mariadb)"
+            },
+            {
+                "name": "escape_string",
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "parameter",
+                            "type": "string"
+                        }
+                    ],
+                    "optional": []
+                },
+                "static": true,
+                "returnType": "string or none",
+                "detail": "MySQL::escape_string(string $parameter): string or none",
+                "value": "escape_string($0)",
+                "documentation": "Returns the argument parameter escaped. Safe to be used within a SQL statement.",
+                "link": "[Full documentation](https://github.com/halon-extras/mariadb)"
+            }
+        ],
+        "detail": "MySQL([string $profile])",
+        "value": "MySQL($0)",
+        "documentation": "The MySQL class.",
         "link": "[Full documentation](https://github.com/halon-extras/mariadb)"
     }
 ]

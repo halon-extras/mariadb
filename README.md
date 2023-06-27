@@ -25,28 +25,39 @@ For the configuration schema, see [mariadb.schema.json](mariadb.schema.json). Be
 plugins:
   - id: mariadb
     config:
-      cnf: /path/to/halon.cnf
-      pool_size: 32
+      profiles:
+        - id: myprofile
+          cnf: /path/to/halon.cnf
+          pool_size: 32
 ```
 
 ## Exported functions
 
 These functions needs to be [imported](https://docs.halon.io/hsl/structures.html#import) from the `extras://mariadb` module path.
 
-### mysql_escape_string(parameter)
+### MySQL(profile)
 
-Returns the argument parameter escaped. Safe to be used within a SQL statement.
+Returns the a MySQL class instance.
 
 ```
-import { mysql_escape_string } from "extras://mariadb";
-$parameter = mysql_escape_string("my string");
+import { MySQL } from "extras://mariadb";
+$parameter = MySQL("myprofile")->escape_string("my string");
 ```
 
-### mysql_query(statement)
+### MySQL.query(statement)
 
 Execute the SQL statement on the server. A successful query result will return an associative array with an "result" array and the "affected" rows. On error an associative array with "errno", "error" and "sqlstate" will be provided.
 
 ```
-import { mysql_query, mysql_escape_string } from "extras://mariadb";
-$result = mysql_query("SELECT * FROM table where column = '".mysql_escape_string($value)."';");
+import { MySQL } from "extras://mariadb";
+$result = MySQL()->query("SELECT * FROM table where column = '".MySQL::escape_string($value)."';");
+```
+
+### MySQL::escape_string(parameter)
+
+Returns the argument parameter escaped. Safe to be used within a SQL statement.
+
+```
+import { MySQL } from "extras://mariadb";
+$parameter = MySQL::escape_string("my string");
 ```

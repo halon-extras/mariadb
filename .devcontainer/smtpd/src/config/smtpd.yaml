@@ -19,4 +19,7 @@ environment:
 plugins:
   - id: mariadb
     config:
-      cnf: /halon.cnf
+      default_profile: myprofile
+      profiles:
+        - cnf: /halon.cnf
+          id: myprofile

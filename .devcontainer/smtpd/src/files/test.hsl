@@ -1,2 +1,7 @@
-echo mysql_escape_string("test");
-echo mysql_query("SELECT * FROM test");
+import { MySQL } from "extras://mariadb";
+
+echo MySQL::escape_string("f \"has");
+echo MySQL()->query("select * from test");
+
+echo MySQL::escape_string("f \"has");
+echo MySQL("myprofile")->query("select * from test");
