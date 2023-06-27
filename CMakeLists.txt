@@ -55,7 +55,7 @@ ENDIF()
 
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/mariadb.so DESTINATION plugins)
 INSTALL(FILES mariadb.schema.json DESTINATION share/plugins)
-INSTALL(FILES mariadb.functions.json DESTINATION share/plugins)
+INSTALL(FILES mariadb.classes.json DESTINATION share/plugins)
 
 IF(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.14.0") 
 	FILE(CREATE_LINK "/opt/halon/plugins/mariadb.so" "${CMAKE_CURRENT_BINARY_DIR}/mariadb.so.link" SYMBOLIC)
