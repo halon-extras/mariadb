@@ -41,7 +41,7 @@ Returns the a MySQL class instance.
 
 ```
 import { MySQL } from "extras://mariadb";
-$parameter = MySQL("myprofile")->escape_string("my string");
+$mysql = MySQL("myprofile");
 ```
 
 ### MySQL.query(statement)
