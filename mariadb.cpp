@@ -4,6 +4,7 @@
 #include <condition_variable>
 #include <queue>
 #include <map>
+#include <string>
 #include <cstring>
 #include <syslog.h>
 
