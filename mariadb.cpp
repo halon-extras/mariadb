@@ -146,7 +146,6 @@ void Halon_cleanup()
 {
 	for (auto & profile : profiles)
 	{
-		std::unique_lock<std::mutex> ul(profile.second->poolMutex);
 		while (!profile.second->poolList.empty())
 		{
 			MYSQL* mysql = profile.second->poolList.front();
