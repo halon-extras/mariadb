@@ -20,8 +20,8 @@ class MariaDBProfile
 		unsigned int write_timeout = 0;
 };
 
-std::map<std::string, MariaDBProfile*> profiles;
-MariaDBProfile* default_profile = nullptr;
+static std::map<std::string, MariaDBProfile*> profiles;
+static MariaDBProfile* default_profile = nullptr;
 
 HALON_EXPORT
 int Halon_version()
@@ -29,7 +29,7 @@ int Halon_version()
 	return HALONMTA_PLUGIN_VERSION;
 }
 
-MYSQL* mysql_init_2(MariaDBProfile* profile)
+static MYSQL* mysql_init_2(MariaDBProfile* profile)
 {
 	MYSQL* mysql = mysql_init(nullptr);
 	mysql_optionsv(mysql, MYSQL_OPT_RECONNECT, (void *)"1");
@@ -116,7 +116,7 @@ bool Halon_init(HalonInitContext* hic)
 	return true;
 }
 
-MYSQL* MySQL_pool_aquire(MariaDBProfile* profile)
+static MYSQL* MySQL_pool_aquire(MariaDBProfile* profile)
 {
 	std::unique_lock<std::mutex> ul(profile->poolMutex);
 	profile->poolCV.wait(ul, [&]() { return !profile->poolList.empty(); });
@@ -133,7 +133,7 @@ MYSQL* MySQL_pool_aquire(MariaDBProfile* profile)
 	return mysql;
 }
 
-void MySQL_pool_release(MariaDBProfile* profile, MYSQL* mysql)
+static void MySQL_pool_release(MariaDBProfile* profile, MYSQL* mysql)
 {
 	std::unique_lock<std::mutex> ul(profile->poolMutex);
 	profile->poolList.push(mysql);
@@ -157,7 +157,7 @@ void Halon_cleanup()
 	mysql_thread_end();
 }
 
-void buildErrorResponse(MYSQL* mysql, HalonHSLValue* ret)
+static void buildErrorResponse(MYSQL* mysql, HalonHSLValue* ret)
 {
 	HalonMTA_hsl_value_set(ret, HALONMTA_HSL_TYPE_ARRAY, nullptr, 0);
 	HalonHSLValue *key, *val;
@@ -176,7 +176,7 @@ void buildErrorResponse(MYSQL* mysql, HalonHSLValue* ret)
 	HalonMTA_hsl_value_set(val, HALONMTA_HSL_TYPE_STRING, mysql_sqlstate(mysql), 0);
 }
 
-void halon_mysql_query_profile(MariaDBProfile* profile, HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
+static void halon_mysql_query_profile(MariaDBProfile* profile, HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 {
 	HalonHSLValue* x = HalonMTA_hsl_argument_get(args, 0);
 	char* query = nullptr;
@@ -264,8 +264,7 @@ void halon_mysql_query_profile(MariaDBProfile* profile, HalonHSLContext* hhc, Ha
 	MySQL_pool_release(profile, mysql);
 }
 
-HALON_EXPORT
-void halon_mysql_query(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
+static void halon_mysql_query(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 {
 	if (!default_profile)
 	{
@@ -276,8 +275,7 @@ void halon_mysql_query(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLVa
 	halon_mysql_query_profile(default_profile, hhc, args, ret);
 }
 
-HALON_EXPORT
-void halon_mysql_escape_string(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
+static void halon_mysql_escape_string(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 {
 	HalonHSLValue* x = HalonMTA_hsl_argument_get(args, 0);
 	char* param = nullptr;
@@ -300,13 +298,13 @@ void halon_mysql_escape_string(HalonHSLContext* hhc, HalonHSLArguments* args, Ha
 	mutex.unlock();
 }
 
-void MySQL_query(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
+static void MySQL_query(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 {
 	MariaDBProfile* profile = (MariaDBProfile*)HalonMTA_hsl_object_ptr_get(hhc);
 	halon_mysql_query_profile(profile, hhc, args, ret);
 }
 
-void MySQL(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
+static void MySQL(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 {
 	MariaDBProfile* profile = default_profile;
 	HalonHSLValue* b = HalonMTA_hsl_argument_get(args, 0);
